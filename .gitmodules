@@ -1,6 +1,0 @@
-[submodule "Database"]
-	path = Database
-	url = https://gitlab-stud.elka.pw.edu.pl/paint24z/Database.git
-[submodule "Frontend"]
-	path = Frontend
-	url = https://gitlab-stud.elka.pw.edu.pl/paint24z/Frontend.git
