@@ -15,11 +15,11 @@ python3 -m venv .venv
 
 3. Activate virtual envirnoment and install requirements:
 ```
-source .venv/bin/activate.fish
-pip3 install -r requirements
+source .venv/bin/activate
+pip3 install -r requirements.txt
 ```
 
-## Usage
+### Usage
 
 1. Start Django server
 ```
@@ -28,7 +28,7 @@ python3 src/manage.py runserver
 
 2. Open localhost `http://localhost:8000/` in browser
 
-## Running using Docker container
+## Running inside Docker container
 
 ```
 docker build -t paint-backend .
