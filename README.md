@@ -40,3 +40,4 @@ docker run -it -p 8000:8000 paint-backend
 ```
 docker-compose up --build
 ```
+Then connect to localhost on port 80.
