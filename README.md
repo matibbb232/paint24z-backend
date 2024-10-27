@@ -27,3 +27,10 @@ python3 src/manage.py runserver
 ```
 
 2. Open localhost `http://localhost:8000/` in browser
+
+## Running using Docker container
+
+```
+docker build -t paint-backend .
+docker run -it -p 8000:8000 paint-backend
+```
