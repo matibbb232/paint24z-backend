@@ -1,9 +1,5 @@
 Django
 djangorestframework
 gunicorn
-asgiref
-sqlparse
-django-stubs
-django-stubs-ext
-types-PyYAML
-typing_extensions
+psycopg[binary,pool]
+django-postgres-extra
