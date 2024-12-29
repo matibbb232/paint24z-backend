@@ -80,7 +80,7 @@ DATABASES = {
         "NAME": "postgres",
         "USER": "paint_user",
         "PASSWORD": "paint",
-        "HOST": "db", # need to change
+        "HOST": "database", # or ip address of database
         "PORT": "5432",
     }
 }
