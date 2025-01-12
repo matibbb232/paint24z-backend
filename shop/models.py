@@ -109,9 +109,9 @@ class OrderDetails(models.Model):
 class Products(models.Model):
     name = models.CharField(max_length=100)
     description = models.TextField()
-    price = models.DecimalField(max_digits=10, decimal_places=2)
+    price = models.DecimalField(max_digits=10, decimal_places = 5)
     composition = models.CharField(max_length=100)
-    weight = models.DecimalField(max_digits=10, decimal_places=2)
+    weight = models.DecimalField(max_digits=10, decimal_places = 5)
     store_id = models.IntegerField()
     manufacturers_id = models.IntegerField()
     categories_id = models.IntegerField()
@@ -137,14 +137,14 @@ class Manufacturers(models.Model):
 
 class Warehouses(models.Model):
     capacity = models.PositiveIntegerField()
-    store = models.ForeignKey(Store, on_delete=models.CASCADE)
+    store_id = models.ForeignKey(Store, on_delete=models.CASCADE)
 
     class Meta:
-        db_table = "Warehouses"
+        db_table = "warehouses"
 
 
 class StorageSpaces(models.Model):
-    warehouse = models.ForeignKey(Warehouses, on_delete=models.CASCADE)
+    warehouses_id = models.ForeignKey(Warehouses, on_delete=models.CASCADE)
 
     class Meta:
         db_table = "storage_spaces"
