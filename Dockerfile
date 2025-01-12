@@ -14,6 +14,7 @@ WORKDIR /app
 
 COPY ./entrypoint.sh ./app
 
+# converting line endings
 CMD ["dos2unix", "/app/entrypoint.sh"]
 
 ENTRYPOINT ["sh", "/app/entrypoint.sh"]
