@@ -14,8 +14,9 @@ WORKDIR /app
 
 COPY ./entrypoint.sh ./app
 
-# converting line endings
-CMD ["dos2unix", "/app/entrypoint.sh"]
+# fixing windows stuff
+RUN ["dos2unix", "/app/entrypoint.sh"]
+RUN ["chmod", "+rx", "/app/entrypoint.sh"]
 
 ENTRYPOINT ["sh", "/app/entrypoint.sh"]
 
