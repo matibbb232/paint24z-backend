@@ -1,0 +1,6 @@
+*.venv
+core/__pycache__
+shop/__pycache__
+shop/migrations/__pycache__
+.mypy_cache
+
