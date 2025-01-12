@@ -10,7 +10,15 @@ from shop.models import (
     Warehouses,
     StorageSpaces,
     Manufacturers,
+    Test
 )
+
+
+class TestSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Test
+        fields = "__all__"
+
 
 class ProductsSerializer(serializers.ModelSerializer):
     # category = serializers.StringRelatedField(source='categories_set.name', many=True)
@@ -18,7 +26,8 @@ class ProductsSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Products
-        fields ='__all__'
+        fields = "__all__"
+
 
 # CREATE TABLE "Products"(
 #   id integer NOT NULL,
@@ -32,57 +41,82 @@ class ProductsSerializer(serializers.ModelSerializer):
 #   CONSTRAINT "Products_pkey" PRIMARY KEY(id)
 # );
 class ProductDetailSerializer(serializers.ModelSerializer):
-    category = serializers.StringRelatedField(source='categories_set.name', many=True)
-    manufacturer = serializers.StringRelatedField(source='manufacturers_set.name', many=True)
+    category = serializers.StringRelatedField(source="categories_set.name", many=True)
+    manufacturer = serializers.StringRelatedField(
+        source="manufacturers_set.name", many=True
+    )
 
     class Meta:
         model = Products
-        fields = '__all__'
+        fields = "__all__"
 
 
 class CategoriesSerializer(serializers.ModelSerializer):
     class Meta:
         model = Categories
-        fields = ['id', 'name', 'description']
+        fields = ["id", "name", "description"]
 
 
 class StoreSerializer(serializers.ModelSerializer):
     class Meta:
         model = Store
-        fields = ['name', 'email_address', 'phone_number', 'tax_id']
+        fields = ["name", "email_address", "phone_number", "tax_id"]
 
 
 class AddressSerializer(serializers.ModelSerializer):
     class Meta:
         model = Addresses
-        fields = ['country', 'city', 'street', 'building_number', 'apartment_number', 'postal_code']
+        fields = [
+            "country",
+            "city",
+            "street",
+            "building_number",
+            "apartment_number",
+            "postal_code",
+        ]
 
 
 class OrdersSerializer(serializers.ModelSerializer):
-    client_name = serializers.StringRelatedField(source='client.name')
+    client_name = serializers.StringRelatedField(source="client.name")
 
     class Meta:
         model = Orders
-        fields = ['id', 'amount', 'status', 'order_date', 'shipping_date', 'history', 'client_name']
+        fields = [
+            "id",
+            "amount",
+            "status",
+            "order_date",
+            "shipping_date",
+            "history",
+            "client_name",
+        ]
 
 
 class OrderDetailsSerializer(serializers.ModelSerializer):
-    product_name = serializers.StringRelatedField(source='product.name')
+    product_name = serializers.StringRelatedField(source="product.name")
 
     class Meta:
         model = OrderDetails
-        fields = ['id', 'order', 'product', 'product_name']
+        fields = ["id", "order", "product", "product_name"]
 
 
 class ClientsSerializer(serializers.ModelSerializer):
     class Meta:
         model = Clients
-        fields = ['id', 'email_address', 'phone_number', 'name', 'last_name', 'gender', 'store']
+        fields = [
+            "id",
+            "email_address",
+            "phone_number",
+            "name",
+            "last_name",
+            "gender",
+            "store",
+        ]
 
 
 class CartSerializer(serializers.ModelSerializer):
-    product_details = OrderDetailsSerializer(source='orderdetails_set', many=True)
+    product_details = OrderDetailsSerializer(source="orderdetails_set", many=True)
 
     class Meta:
         model = Orders
-        fields = ['id', 'product_details']
+        fields = ["id", "product_details"]

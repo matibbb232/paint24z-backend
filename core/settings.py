@@ -78,7 +78,7 @@ WSGI_APPLICATION = "core.wsgi.application"
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.postgresql",
-        "NAME": "postgres",
+        "NAME": "PAINT_database",
         "USER": "paint_user",
         "PASSWORD": "paint",
         "HOST": "database", # or ip address of database
@@ -121,8 +121,8 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
 
-STATIC_URL = "/static/"
-STATIC_ROOT = Path.joinpath(BASE_DIR, "static")
+STATIC_URL = 'static/'
+STATIC_ROOT = '/static/'
 # STATIC_ROOT = "static/"
 # STATICFILES_DIRS = [Path.joinpath(BASE_DIR, "static")]
 

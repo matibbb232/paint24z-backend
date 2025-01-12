@@ -66,6 +66,7 @@ class BaseTestCase(TestCase):
             store=self.store,
         )
 
+
 class StoreModelTests(BaseTestCase):
     def test_store_creation(self):
         self.assertEqual(Store.objects.count(), 1)
@@ -74,6 +75,7 @@ class StoreModelTests(BaseTestCase):
     def test_store_deletion(self):
         self.store.delete()
         self.assertEqual(Store.objects.count(), 0)
+
 
 class EmployeeModelTests(BaseTestCase):
     def test_employee_creation(self):
@@ -85,6 +87,7 @@ class EmployeeModelTests(BaseTestCase):
         self.employee.delete()
         self.assertEqual(Employees.objects.count(), 0)
 
+
 class ClientModelTests(BaseTestCase):
     def test_client_creation(self):
         self.assertEqual(Clients.objects.count(), 1)
@@ -94,6 +97,7 @@ class ClientModelTests(BaseTestCase):
         self.client.delete()
         self.assertEqual(Clients.objects.count(), 0)
 
+
 class OrderModelTests(BaseTestCase):
     def setUp(self):
         super().setUp()
@@ -102,7 +106,7 @@ class OrderModelTests(BaseTestCase):
             status=OrderStatus.PENDING,
             order_date=date.today(),
             shipping_date=date.today(),
-            client=self.client
+            client=self.client,
         )
 
     def test_order_creation(self):
@@ -114,18 +118,20 @@ class OrderModelTests(BaseTestCase):
         self.order.delete()
         self.assertEqual(Orders.objects.count(), 0)
 
+
 class ProductAndCategoryTests(BaseTestCase):
     def setUp(self):
         super().setUp()
         self.category = Categories.objects.create(
             name="Test Category",
             description="Category description",
-            product=self.product
+            product=self.product,
         )
 
     def test_product_creation(self):
         self.assertEqual(Products.objects.count(), 1)
         self.assertEqual(self.product.name, "Product 1")
+
 
 #     def test_category_creation(self):
 #         self.assertEqual(Categories.objects.count(), 1)

@@ -1,22 +1,33 @@
 from django.db import models
 
+
+class Test(models.Model):
+    nazwa = models.CharField(max_length=100)
+
+    class Meta:
+        db_table = "test"
+
+
 class OrderStatus(models.TextChoices):
-    PENDING = 'pending', 'Pending'
-    SHIPPED = 'shipped', 'Shipped'
-    DELIVERED = 'delivered', 'Delivered'
+    PENDING = "pending", "Pending"
+    SHIPPED = "shipped", "Shipped"
+    DELIVERED = "delivered", "Delivered"
+
 
 class Gender(models.TextChoices):
-    FEMALE = 'F', 'Female'
-    MALE = 'M', 'Male'
+    FEMALE = "F", "Female"
+    MALE = "M", "Male"
+
 
 class Store(models.Model):
     name = models.CharField(max_length=30)
     email_address = models.EmailField(max_length=30)
     phone_number = models.CharField(max_length=15)
     tax_id = models.PositiveIntegerField()  # Assuming this is integer(10)
-    
+
     class Meta:
         db_table = "Store"
+
 
 class Employees(models.Model):
     name = models.CharField(max_length=30)
@@ -28,21 +39,24 @@ class Employees(models.Model):
     phone_number = models.CharField(max_length=15)
     bank_account_number = models.CharField(max_length=26, blank=True, null=True)
     store = models.ForeignKey(Store, on_delete=models.CASCADE)
-    
+
     class Meta:
         db_table = "Employees"
 
+
 class Administrators(models.Model):
     employee = models.OneToOneField(Employees, on_delete=models.CASCADE)
-    
+
     class Meta:
         db_table = "Administrators"
 
+
 class Operators(models.Model):
     employee = models.OneToOneField(Employees, on_delete=models.CASCADE)
-    
+
     class Meta:
         db_table = "Operators"
+
 
 class Clients(models.Model):
     email_address = models.EmailField(max_length=30)
@@ -51,9 +65,10 @@ class Clients(models.Model):
     last_name = models.CharField(max_length=50)
     gender = models.CharField(max_length=1, choices=Gender.choices)
     store = models.ForeignKey(Store, on_delete=models.CASCADE)
-    
+
     class Meta:
         db_table = "Clients"
+
 
 class Addresses(models.Model):
     country = models.CharField(max_length=30)
@@ -62,13 +77,14 @@ class Addresses(models.Model):
     building_number = models.CharField(max_length=5)
     apartment_number = models.CharField(max_length=4, blank=True, null=True)
     postal_code = models.CharField(max_length=6)
-    warehouse = models.ForeignKey('Warehouses', on_delete=models.CASCADE)
+    warehouse = models.ForeignKey("Warehouses", on_delete=models.CASCADE)
     client = models.ForeignKey(Clients, on_delete=models.CASCADE)
     store = models.ForeignKey(Store, on_delete=models.CASCADE)
     employee = models.ForeignKey(Employees, on_delete=models.CASCADE)
-    
+
     class Meta:
         db_table = "Addresses"
+
 
 class Orders(models.Model):
     amount = models.DecimalField(max_digits=10, decimal_places=2)  # For money type
@@ -77,16 +93,18 @@ class Orders(models.Model):
     shipping_date = models.DateField()
     history = models.TextField(blank=True, null=True)
     client = models.ForeignKey(Clients, on_delete=models.CASCADE)
-    
+
     class Meta:
         db_table = "Orders"
 
+
 class OrderDetails(models.Model):
     order = models.ForeignKey(Orders, on_delete=models.CASCADE)
-    product = models.ForeignKey('Products', on_delete=models.CASCADE)
-    
+    product = models.ForeignKey("Products", on_delete=models.CASCADE)
+
     class Meta:
         db_table = "Order_Details"
+
 
 class Products(models.Model):
     name = models.CharField(max_length=100)
@@ -95,46 +113,52 @@ class Products(models.Model):
     composition = models.PositiveIntegerField()
     weight = models.FloatField()
     store = models.ForeignKey(Store, on_delete=models.CASCADE)
-    
+
     class Meta:
         db_table = "Products"
+
 
 class Categories(models.Model):
     name = models.CharField(max_length=50)
     description = models.TextField()
     product = models.ForeignKey(Products, on_delete=models.CASCADE)
-    
+
     class Meta:
         db_table = "Categories"
+
 
 class Manufacturers(models.Model):
     name = models.CharField(max_length=30)
     product = models.ForeignKey(Products, on_delete=models.CASCADE)
-    
+
     class Meta:
         db_table = "Manufacturers"
+
 
 class Warehouses(models.Model):
     capacity = models.PositiveIntegerField()
     store = models.ForeignKey(Store, on_delete=models.CASCADE)
-    
+
     class Meta:
         db_table = "Warehouses"
+
 
 class StorageSpaces(models.Model):
     product = models.ForeignKey(Products, on_delete=models.CASCADE)
     warehouse = models.ForeignKey(Warehouses, on_delete=models.CASCADE)
-    
+
     class Meta:
         db_table = "Storage_Spaces"
+
 
 class Users(models.Model):
     username = models.CharField(max_length=30)
     password = models.CharField(max_length=50)
     creation_date = models.DateField()
-    employee = models.ForeignKey(Employees, on_delete=models.CASCADE, blank=True, null=True)
+    employee = models.ForeignKey(
+        Employees, on_delete=models.CASCADE, blank=True, null=True
+    )
     client = models.ForeignKey(Clients, on_delete=models.CASCADE, blank=True, null=True)
-    
+
     class Meta:
         db_table = "Users"
-
