@@ -6,7 +6,7 @@ from .views import (
     get_cart,
     get_categories,
     get_test,
-    get_manufactures,
+    get_manufacturers,
 )
 
 urlpatterns = [
@@ -15,5 +15,5 @@ urlpatterns = [
     path("categories/", get_categories, name="categories"),
     path("about/", get_about, name="about"),
     path("cart/<int:id>/", get_cart, name="cart"),
-    path("manufactures/", get_manufactures, name="manufactures"),
+    path("manufacturers/", get_manufacturers, name="manufacturers"),
 ]

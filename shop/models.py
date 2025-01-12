@@ -126,7 +126,7 @@ class Categories(models.Model):
         db_table = "categories"
 
 
-class Manufactures(models.Model):
+class Manufacturers(models.Model):
     name = models.CharField(max_length=30)
 
     class Meta:

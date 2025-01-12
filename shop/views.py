@@ -4,14 +4,14 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.pagination import PageNumberPagination
 from rest_framework import status
-from .models import Products, Manufactures, Categories, Store, Addresses, Orders, Test
+from .models import Products, Manufacturers, Categories, Store, Addresses, Orders, Test
 from .serializers import (
     ProductsSerializer,
     CategoriesSerializer,
     StoreSerializer,
     CartSerializer,
     TestSerializer,
-    ManufacturesSerializer
+    ManufacturersSerializer
 )
 from rest_framework.views import APIView
 # from rest_framework.response import Response
@@ -83,11 +83,11 @@ def get_categories(request):
     return Response(serializer.data)
 
 @api_view(["GET"])
-def get_manufactures(request):
-    categories = Manufactures.objects.all()
+def get_manufacturers(request):
+    categories = Manufacturers.objects.all()
     print(categories)
     print(categories.first())
-    serializer = ManufacturesSerializer(categories, many=True)
+    serializer = ManufacturersSerializer(categories, many=True)
     return Response(serializer.data)
 
 @api_view(["GET"])
