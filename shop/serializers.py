@@ -39,11 +39,11 @@ class ProductsSerializer(serializers.ModelSerializer):
 #   CONSTRAINT "Products_pkey" PRIMARY KEY(id)
 # );
 
-class ProductDetailSerializer(serializers.ModelSerializer):
-    category = serializers.StringRelatedField(source="categories_set.name", many=True)
-    manufacturer = serializers.StringRelatedField(
-        source="manufacturers_set.name", many=True
-    )
+class ProductSerializer(serializers.ModelSerializer):
+    # category = serializers.StringRelatedField(source="categories_set.name", many=True)
+    # manufacturer = serializers.StringRelatedField(
+    #     source="manufacturers_set.name", many=True
+    # )
 
     class Meta:
         model = Products

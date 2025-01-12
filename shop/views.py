@@ -11,7 +11,8 @@ from .serializers import (
     StoreSerializer,
     CartSerializer,
     TestSerializer,
-    ManufacturersSerializer
+    ManufacturersSerializer,
+    ProductSerializer
 )
 from rest_framework.views import APIView
 # from rest_framework.response import Response
@@ -60,16 +61,12 @@ def test_json(request):
 
 @api_view(["GET"])
 def get_product(request, id):
-    product_info = request.query_params.get("product_info", "false").lower() == "true"
+
     product = get_object_or_404(Products, id=id)
 
-    # Selective serialization based on `product_info`
-    if product_info:
-        serializer = ProductsSerializer(product)
-    else:
-        serializer = ProductsSerializer(
-            product, fields=("name", "price")
-        )  # Only name and price
+
+    serializer = ProductSerializer(product)
+ # Only name and price
 
     return Response(serializer.data)
 
