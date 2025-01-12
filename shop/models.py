@@ -121,10 +121,9 @@ class Products(models.Model):
 class Categories(models.Model):
     name = models.CharField(max_length=50)
     description = models.TextField()
-    product = models.ForeignKey(Products, on_delete=models.CASCADE)
 
     class Meta:
-        db_table = "Categories"
+        db_table = "categories"
 
 
 class Manufacturers(models.Model):

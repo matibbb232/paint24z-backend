@@ -21,8 +21,8 @@ class TestSerializer(serializers.ModelSerializer):
 
 
 class ProductsSerializer(serializers.ModelSerializer):
-    # category = serializers.StringRelatedField(source='categories_set.name', many=True)
-    # manufacturer = serializers.StringRelatedField(source='manufacturers_set.name', many=True)
+    category = serializers.StringRelatedField(source='categories_set.name', many=True)
+    manufacturer = serializers.StringRelatedField(source='manufacturers_set.name', many=True)
 
     class Meta:
         model = Products
@@ -54,7 +54,7 @@ class ProductDetailSerializer(serializers.ModelSerializer):
 class CategoriesSerializer(serializers.ModelSerializer):
     class Meta:
         model = Categories
-        fields = ["id", "name", "description"]
+        fields = "__all__"
 
 
 class StoreSerializer(serializers.ModelSerializer):

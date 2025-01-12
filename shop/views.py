@@ -76,6 +76,8 @@ def get_product(request, id):
 @api_view(["GET"])
 def get_categories(request):
     categories = Categories.objects.all()
+    print(categories)
+    print(categories.first())
     serializer = CategoriesSerializer(categories, many=True)
     return Response(serializer.data)
 
