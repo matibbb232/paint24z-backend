@@ -7,6 +7,7 @@ from .views import (
     get_categories,
     get_test,
     get_manufacturers,
+    get_store,
 )
 
 urlpatterns = [
@@ -16,4 +17,5 @@ urlpatterns = [
     path("about/", get_about, name="about"),
     path("cart/<int:id>/", get_cart, name="cart"),
     path("manufacturers/", get_manufacturers, name="manufacturers"),
+    path("store/", get_store, name="store")
 ]

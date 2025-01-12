@@ -64,7 +64,7 @@ class ManufacturersSerializer(serializers.ModelSerializer):
 class StoreSerializer(serializers.ModelSerializer):
     class Meta:
         model = Store
-        fields = ["name", "email_address", "phone_number", "tax_id"]
+        fields = "__all__"
 
 
 class AddressSerializer(serializers.ModelSerializer):

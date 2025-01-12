@@ -84,10 +84,14 @@ def get_categories(request):
 
 @api_view(["GET"])
 def get_manufacturers(request):
-    categories = Manufacturers.objects.all()
-    print(categories)
-    print(categories.first())
-    serializer = ManufacturersSerializer(categories, many=True)
+    manu = Manufacturers.objects.all()
+    serializer = ManufacturersSerializer(manu, many=True)
+    return Response(serializer.data)
+
+@api_view(["GET"])
+def get_store(request):
+    store = Store.objects.all()
+    serializer = StoreSerializer(store, many=True)
     return Response(serializer.data)
 
 @api_view(["GET"])

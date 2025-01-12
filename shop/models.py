@@ -26,7 +26,7 @@ class Store(models.Model):
     tax_id = models.PositiveIntegerField()  # Assuming this is integer(10)
 
     class Meta:
-        db_table = "Store"
+        db_table = "store"
 
 
 class Employees(models.Model):
@@ -109,11 +109,13 @@ class OrderDetails(models.Model):
 class Products(models.Model):
     name = models.CharField(max_length=100)
     description = models.TextField()
-    price = models.DecimalField(max_digits=10, decimal_places=2)  # For money type
-    composition = models.PositiveIntegerField()
-    weight = models.FloatField()
-    store = models.ForeignKey(Store, on_delete=models.CASCADE)
-
+    price = models.DecimalField(max_digits=10, decimal_places=2)
+    composition = models.CharField(max_length=100)
+    weight = models.DecimalField(max_digits=10, decimal_places=2)
+    store_id = models.IntegerField()
+    manufacturers_id = models.IntegerField()
+    categories_id = models.IntegerField()
+    storage_spaces_id = models.IntegerField()
     class Meta:
         db_table = "products"
 
@@ -142,11 +144,10 @@ class Warehouses(models.Model):
 
 
 class StorageSpaces(models.Model):
-    product = models.ForeignKey(Products, on_delete=models.CASCADE)
     warehouse = models.ForeignKey(Warehouses, on_delete=models.CASCADE)
 
     class Meta:
-        db_table = "Storage_Spaces"
+        db_table = "storage_spaces"
 
 
 class Users(models.Model):
