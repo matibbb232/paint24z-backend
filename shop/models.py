@@ -115,7 +115,7 @@ class Products(models.Model):
     store = models.ForeignKey(Store, on_delete=models.CASCADE)
 
     class Meta:
-        db_table = "Products"
+        db_table = "products"
 
 
 class Categories(models.Model):
@@ -126,12 +126,11 @@ class Categories(models.Model):
         db_table = "categories"
 
 
-class Manufacturers(models.Model):
+class Manufactures(models.Model):
     name = models.CharField(max_length=30)
-    product = models.ForeignKey(Products, on_delete=models.CASCADE)
 
     class Meta:
-        db_table = "Manufacturers"
+        db_table = "manufacturers"
 
 
 class Warehouses(models.Model):

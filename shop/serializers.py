@@ -9,7 +9,7 @@ from shop.models import (
     Clients,
     Warehouses,
     StorageSpaces,
-    Manufacturers,
+    Manufactures,
     Test
 )
 
@@ -56,6 +56,10 @@ class CategoriesSerializer(serializers.ModelSerializer):
         model = Categories
         fields = "__all__"
 
+class ManufacturesSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Manufactures
+        fields = "__all__"
 
 class StoreSerializer(serializers.ModelSerializer):
     class Meta:
