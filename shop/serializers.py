@@ -10,7 +10,7 @@ from shop.models import (
     Warehouses,
     StorageSpaces,
     Manufacturers,
-    Test
+    Test,
 )
 
 
@@ -20,31 +20,25 @@ class TestSerializer(serializers.ModelSerializer):
         fields = "__all__"
 
 
+class CategoriesSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Categories
+        fields = "__all__"
+
+
 class ManufacturersSerializer(serializers.ModelSerializer):
     class Meta:
         model = Manufacturers
         fields = "__all__"
 
+
 class ProductsSerializer(serializers.ModelSerializer):
     manufacturer = ManufacturersSerializer()
+    category = CategoriesSerializer()
 
     class Meta:
         model = Products
         fields = "__all__"
-
-
-# CREATE TABLE "Products"(
-#   id integer NOT NULL,
-#   "Name" varchar(100) NOT NULL,
-#   "Description" text NOT NULL,
-#   "Price" money NOT NULL,
-#   "Composition" varchar(100) NOT NULL,
-#   "Weight" NUMERIC(10, 2) NOT NULL,
-#   "Store_id" integer NOT NULL,
-#   "Manufacturers_id" integer NOT NULL,
-#   CONSTRAINT "Products_pkey" PRIMARY KEY(id)
-# );
-
 
 
 class ProductSerializer(serializers.ModelSerializer):
@@ -55,22 +49,17 @@ class ProductSerializer(serializers.ModelSerializer):
         fields = "__all__"
 
 
-class CategoriesSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Categories
-        fields = "__all__"
-
-
-
 class StoreSerializer(serializers.ModelSerializer):
     class Meta:
         model = Store
         fields = "__all__"
 
+
 class StorageSpacesSerializer(serializers.ModelSerializer):
     class Meta:
         model = StorageSpaces
         fields = "__all__"
+
 
 class WarehousesSerializer(serializers.ModelSerializer):
     class Meta:

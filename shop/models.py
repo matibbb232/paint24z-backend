@@ -105,30 +105,12 @@ class OrderDetails(models.Model):
     class Meta:
         db_table = "Order_Details"
 
+
 class Manufacturers(models.Model):
     name = models.CharField(max_length=30)
 
     class Meta:
         db_table = "manufacturers"
-
-class Products(models.Model):
-    name = models.CharField(max_length=100)
-    description = models.TextField()
-    price = models.DecimalField(max_digits=10, decimal_places = 5)
-    composition = models.CharField(max_length=100)
-    weight = models.DecimalField(max_digits=10, decimal_places = 5)
-    store_id = models.IntegerField()
-    # manufacturers_id = models.IntegerField()
-    manufacturer = models.ForeignKey(
-        Manufacturers,  # Reference the Manufacturers model
-        on_delete=models.CASCADE,
-        related_name="products",
-        db_column="manufacturers_id"  # Map to the existing column name
-    )
-    categories_id = models.IntegerField()
-    storage_spaces_id = models.IntegerField()
-    class Meta:
-        db_table = "products"
 
 
 class Categories(models.Model):
@@ -139,6 +121,30 @@ class Categories(models.Model):
         db_table = "categories"
 
 
+class Products(models.Model):
+    name = models.CharField(max_length=100)
+    description = models.TextField()
+    price = models.DecimalField(max_digits=10, decimal_places=5)
+    composition = models.CharField(max_length=100)
+    weight = models.DecimalField(max_digits=10, decimal_places=5)
+    store_id = models.IntegerField()
+    # manufacturers_id = models.IntegerField()
+    manufacturer = models.ForeignKey(
+        Manufacturers,  # Reference the Manufacturers model
+        on_delete=models.CASCADE,
+        related_name="products",
+        db_column="manufacturers_id",  # Map to the existing column name
+    )
+    category = models.ForeignKey(
+        Categories,  # Reference the Categories model
+        on_delete=models.CASCADE,
+        related_name="products",
+        db_column="categories_id",  # Map to the existing column name
+    )
+    storage_spaces_id = models.IntegerField()
+
+    class Meta:
+        db_table = "products"
 
 
 class Warehouses(models.Model):
