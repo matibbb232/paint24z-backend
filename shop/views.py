@@ -64,9 +64,7 @@ def get_product(request, id):
 
     product = get_object_or_404(Products, id=id)
 
-
     serializer = ProductSerializer(product)
- # Only name and price
 
     return Response(serializer.data)
 

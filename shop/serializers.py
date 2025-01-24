@@ -20,7 +20,13 @@ class TestSerializer(serializers.ModelSerializer):
         fields = "__all__"
 
 
+class ManufacturersSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Manufacturers
+        fields = "__all__"
+
 class ProductsSerializer(serializers.ModelSerializer):
+    manufacturer = ManufacturersSerializer()
 
     class Meta:
         model = Products
@@ -39,11 +45,10 @@ class ProductsSerializer(serializers.ModelSerializer):
 #   CONSTRAINT "Products_pkey" PRIMARY KEY(id)
 # );
 
+
+
 class ProductSerializer(serializers.ModelSerializer):
-    # category = serializers.StringRelatedField(source="categories_set.name", many=True)
-    # manufacturer = serializers.StringRelatedField(
-    #     source="manufacturers_set.name", many=True
-    # )
+    manufacturer = ManufacturersSerializer()
 
     class Meta:
         model = Products
@@ -55,10 +60,7 @@ class CategoriesSerializer(serializers.ModelSerializer):
         model = Categories
         fields = "__all__"
 
-class ManufacturersSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Manufacturers
-        fields = "__all__"
+
 
 class StoreSerializer(serializers.ModelSerializer):
     class Meta:

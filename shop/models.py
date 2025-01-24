@@ -105,6 +105,11 @@ class OrderDetails(models.Model):
     class Meta:
         db_table = "Order_Details"
 
+class Manufacturers(models.Model):
+    name = models.CharField(max_length=30)
+
+    class Meta:
+        db_table = "manufacturers"
 
 class Products(models.Model):
     name = models.CharField(max_length=100)
@@ -113,7 +118,13 @@ class Products(models.Model):
     composition = models.CharField(max_length=100)
     weight = models.DecimalField(max_digits=10, decimal_places = 5)
     store_id = models.IntegerField()
-    manufacturers_id = models.IntegerField()
+    # manufacturers_id = models.IntegerField()
+    manufacturer = models.ForeignKey(
+        Manufacturers,  # Reference the Manufacturers model
+        on_delete=models.CASCADE,
+        related_name="products",
+        db_column="manufacturers_id"  # Map to the existing column name
+    )
     categories_id = models.IntegerField()
     storage_spaces_id = models.IntegerField()
     class Meta:
@@ -128,11 +139,6 @@ class Categories(models.Model):
         db_table = "categories"
 
 
-class Manufacturers(models.Model):
-    name = models.CharField(max_length=30)
-
-    class Meta:
-        db_table = "manufacturers"
 
 
 class Warehouses(models.Model):
