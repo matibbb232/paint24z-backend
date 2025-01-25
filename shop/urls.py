@@ -1,21 +1,33 @@
 from django.urls import path
+
 from .views import (
-    get_products,
-    get_product,
     get_about,
     get_cart,
     get_categories,
-    get_test,
     get_manufacturers,
+    get_product,
+    get_products,
+    get_products_by_category,
+    get_products_by_manufacturer,
     get_store,
 )
 
 urlpatterns = [
     path("products/", get_products, name="Products"),
     path("product/<int:id>/", get_product, name="product_detail"),
+    path(
+        "products/category=<int:id>/",
+        get_products_by_category,
+        name="products_by_category",
+    ),
+    path(
+        "products/manufacturer=<int:id>/",
+        get_products_by_manufacturer,
+        name="products_by_manufacturer",
+    ),
     path("categories/", get_categories, name="categories"),
     path("about/", get_about, name="about"),
     path("cart/<int:id>/", get_cart, name="cart"),
     path("manufacturers/", get_manufacturers, name="manufacturers"),
-    path("store/", get_store, name="store")
+    path("store/", get_store, name="store"),
 ]

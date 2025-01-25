@@ -28,9 +28,17 @@ def get_products(request: Request) -> Response:
 
 
 @api_view(["GET"])
-def get_products_category(request: Request, id: int) -> Response:
+def get_products_by_category(request: Request, id: int) -> Response:
     """Returns products with given category id"""
     products = Products.objects.filter(category_id=id)
+    serializer = ProductsSerializer(products, many=True)
+    return Response(serializer.data)
+
+
+@api_view(["GET"])
+def get_products_by_manufacturer(request: Request, id: int) -> Response:
+    """Returns products with given manufacturer id"""
+    products = Products.objects.filter(manufacturer_id=id)
     serializer = ProductsSerializer(products, many=True)
     return Response(serializer.data)
 
@@ -80,6 +88,7 @@ def get_about(request: Request) -> Response:
     return Response(
         {"store": store_serializer.data, "addresses": addresses_serializer.data}
     )
+
 
 # Not implemented
 @api_view(["GET"])
