@@ -3,3 +3,4 @@ djangorestframework
 gunicorn
 psycopg[binary,pool]
 django-postgres-extra
+djangorestframework_simplejwt

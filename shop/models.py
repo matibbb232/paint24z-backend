@@ -1,4 +1,5 @@
 from django.db import models
+from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
 
 
 class Test(models.Model):
@@ -41,7 +42,7 @@ class Employees(models.Model):
     store = models.ForeignKey(Store, on_delete=models.CASCADE)
 
     class Meta:
-        db_table = "Employees"
+        db_table = "employees"
 
 
 class Administrators(models.Model):
@@ -67,7 +68,7 @@ class Clients(models.Model):
     store = models.ForeignKey(Store, on_delete=models.CASCADE)
 
     class Meta:
-        db_table = "Clients"
+        db_table = "clients"
 
 
 class Addresses(models.Model):
@@ -83,7 +84,7 @@ class Addresses(models.Model):
     employee = models.ForeignKey(Employees, on_delete=models.CASCADE)
 
     class Meta:
-        db_table = "Addresses"
+        db_table = "addresses"
 
 
 class Orders(models.Model):
@@ -95,7 +96,7 @@ class Orders(models.Model):
     client = models.ForeignKey(Clients, on_delete=models.CASCADE)
 
     class Meta:
-        db_table = "Orders"
+        db_table = "orders"
 
 
 class OrderDetails(models.Model):
@@ -103,7 +104,7 @@ class OrderDetails(models.Model):
     product = models.ForeignKey("Products", on_delete=models.CASCADE)
 
     class Meta:
-        db_table = "Order_Details"
+        db_table = "order_Details"
 
 
 class Manufacturers(models.Model):
@@ -128,6 +129,7 @@ class Products(models.Model):
     composition = models.CharField(max_length=100)
     weight = models.DecimalField(max_digits=10, decimal_places=5)
     store_id = models.IntegerField()
+    instock = models.IntegerField()
     # manufacturers_id = models.IntegerField()
     manufacturer = models.ForeignKey(
         Manufacturers,  # Reference the Manufacturers model
@@ -161,15 +163,48 @@ class StorageSpaces(models.Model):
     class Meta:
         db_table = "storage_spaces"
 
+class UserManager(BaseUserManager):
+    def create_user(self, username, password=None, **extra_fields):
+        if not username:
+            raise ValueError('The Username field is required')
+        user = self.model(username=username, **extra_fields)
+        user.set_password(password)  # Hash the password
+        user.save(using=self._db)
+        return user
 
-class Users(models.Model):
-    username = models.CharField(max_length=30)
-    password = models.CharField(max_length=50)
-    creation_date = models.DateField()
+    def create_superuser(self, username, password=None, **extra_fields):
+        extra_fields.setdefault('is_staff', True)
+        extra_fields.setdefault('is_superuser', True)
+        return self.create_user(username, password, **extra_fields)
+
+class Users(AbstractBaseUser,PermissionsMixin):
+    username = models.CharField(max_length=30, unique=True)
+    password = models.CharField(max_length=128)  # Django uses 128-char hashed passwords
+    creation_date = models.DateField(auto_now_add=True)
+    last_login = models.DateTimeField(null=True, blank=True)  # Add this field
+    is_active = models.BooleanField(default=True)  # Required for user accounts
+    is_staff = models.BooleanField(default=False)  # Required for admin interface
+    is_superuser = models.BooleanField(default=False)  
     employee = models.ForeignKey(
-        Employees, on_delete=models.CASCADE, blank=True, null=True
+        Employees, on_delete=models.CASCADE, blank=True, null=True,
+        related_name="users",
+        db_column="employees_id"
     )
-    client = models.ForeignKey(Clients, on_delete=models.CASCADE, blank=True, null=True)
+    client = models.ForeignKey(
+        Clients, on_delete=models.CASCADE, blank=True, null=True,
+        related_name="users",
+        db_column="clients_id"
+    )
+
+    is_active = models.BooleanField(default=True)
+    is_staff = models.BooleanField(default=False)
+
+    objects = UserManager()
+
+    USERNAME_FIELD = 'username'
+    REQUIRED_FIELDS = []
 
     class Meta:
-        db_table = "Users"
+        db_table = 'users'
+
+

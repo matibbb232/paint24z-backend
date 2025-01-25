@@ -1,3 +1,5 @@
+from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
+from rest_framework_simplejwt.views import TokenObtainPairView
 from rest_framework import serializers
 from shop.models import (
     Products,
@@ -11,6 +13,7 @@ from shop.models import (
     StorageSpaces,
     Manufacturers,
     Test,
+    Users,
 )
 
 
@@ -124,3 +127,32 @@ class CartSerializer(serializers.ModelSerializer):
     class Meta:
         model = Orders
         fields = ["id", "product_details"]
+
+
+
+class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
+    @classmethod
+    def get_token(cls, user):
+        token = super().get_token(user)
+
+        # Add custom claims
+        token['username'] = user.username
+        return token
+
+    def validate(self, attrs):
+        username = attrs.get("username")
+        password = attrs.get("password")
+
+        # Check user existence
+        try:
+            user = Users.objects.get(username=username)
+        except Users.DoesNotExist:
+            raise serializers.ValidationError("Invalid username or password.")
+
+        if not user.check_password(password):  # Hash comparison
+            raise serializers.ValidationError("Invalid username or password.")
+
+        return super().validate(attrs)
+
+class CustomTokenObtainPairView(TokenObtainPairView):
+    serializer_class = CustomTokenObtainPairSerializer

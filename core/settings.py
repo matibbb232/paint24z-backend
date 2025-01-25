@@ -38,7 +38,8 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "rest_framework",
-    "shop"
+    "rest_framework_simplejwt",
+    "shop",
 ]
 
 MIDDLEWARE = [
@@ -130,3 +131,6 @@ STATIC_ROOT = '/static/'
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+
+
+AUTH_USER_MODEL = 'shop.Users'

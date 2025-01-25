@@ -7,6 +7,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework.views import APIView
+from django.contrib.auth.hashers import make_password
 
 from .models import Addresses, Categories, Manufacturers, Orders, Products, Store, Test
 from .serializers import (
@@ -29,6 +30,11 @@ def get_products(request: Request) -> Response:
     order: str = request.query_params.get("order", "asc").lower()  # default value "asc"
 
     filters: dict[str, int] = {}
+
+    
+
+    hashed_password = make_password("kochamkable123")
+    print(hashed_password)
 
     if category_id:
         try:
