@@ -25,8 +25,8 @@ def get_products(request: Request) -> Response:
     """Returns list of products with optional filtering and sorting."""
     category_id: str | None = request.query_params.get("category")
     manufacturer_id: str | None = request.query_params.get("manufacturer")
-    sort_by: str = request.query_params.get("sort_by", "id")  # Default sorting by 'id'
-    order: str = request.query_params.get("order").lower()
+    sort_by: str = request.query_params.get("sort_by", "id")  # default value "id"
+    order: str = request.query_params.get("order", "asc").lower()  # default value "asc"
 
     filters: dict[str, int] = {}
 
@@ -60,9 +60,9 @@ def get_products(request: Request) -> Response:
             status=400,
         )
 
-    if order.lower() == "desc":
+    if order == "desc":
         sort_by = f"-{sort_by}"  # Prefix with '-' for descending order
-    elif order.lower() != "asc":
+    elif order != "asc":
         return Response(
             {"error": "Invalid order value. Must be 'asc' or 'desc'."}, status=400
         )
