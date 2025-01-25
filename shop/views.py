@@ -1,3 +1,4 @@
+from django.db.models.query import QuerySet
 from django.shortcuts import get_object_or_404
 from rest_framework import authentication, permissions, status
 from rest_framework.decorators import api_view, permission_classes
@@ -21,24 +22,53 @@ from .serializers import (
 
 @api_view(["GET"])
 def get_products(request: Request) -> Response:
-    """Returns list of products"""
-    products = Products.objects.all()
-    serializer = ProductsSerializer(products, many=True)
-    return Response(serializer.data)
+    """Returns list of products with optional filtering and sorting."""
+    category_id: str | None = request.query_params.get("category")
+    manufacturer_id: str | None = request.query_params.get("manufacturer")
+    sort_by: str = request.query_params.get("sort_by", "id")  # Default sorting by 'id'
+    order: str = request.query_params.get("order").lower()
 
+    filters: dict[str, int] = {}
 
-@api_view(["GET"])
-def get_products_by_category(request: Request, id: int) -> Response:
-    """Returns products with given category id"""
-    products = Products.objects.filter(category_id=id)
-    serializer = ProductsSerializer(products, many=True)
-    return Response(serializer.data)
+    if category_id:
+        try:
+            filters["category_id"] = int(category_id)
+        except ValueError:
+            return Response(
+                {"error": "Invalid category ID. Must be an integer."}, status=400
+            )
 
+    if manufacturer_id:
+        try:
+            filters["manufacturer_id"] = int(manufacturer_id)
+        except ValueError:
+            return Response(
+                {"error": "Invalid manufacturer ID. Must be an integer."}, status=400
+            )
 
-@api_view(["GET"])
-def get_products_by_manufacturer(request: Request, id: int) -> Response:
-    """Returns products with given manufacturer id"""
-    products = Products.objects.filter(manufacturer_id=id)
+    valid_sort_fields: list[str] = [
+        "id",
+        "name",
+        "price",
+        "weight",
+    ]
+    if sort_by not in valid_sort_fields:
+        return Response(
+            {
+                "error": f"Invalid sort_by field. Allowed fields: {', '.join(valid_sort_fields)}."
+            },
+            status=400,
+        )
+
+    if order.lower() == "desc":
+        sort_by = f"-{sort_by}"  # Prefix with '-' for descending order
+    elif order.lower() != "asc":
+        return Response(
+            {"error": "Invalid order value. Must be 'asc' or 'desc'."}, status=400
+        )
+
+    products: QuerySet = Products.objects.filter(**filters).order_by(sort_by)
+
     serializer = ProductsSerializer(products, many=True)
     return Response(serializer.data)
 
