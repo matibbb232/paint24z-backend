@@ -1,36 +1,43 @@
+from typing import Type
+
+from django.contrib.auth.hashers import make_password
 from django.db.models.query import QuerySet
+from django.http import JsonResponse
 from django.shortcuts import get_object_or_404
+from django.views import View
 from rest_framework import authentication, permissions, status
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.pagination import PageNumberPagination
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import (
+    AllowAny,
+    BasePermission,
+    IsAdminUser,
+    IsAuthenticated,
+)
 from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from django.contrib.auth.hashers import make_password
-from django.http import JsonResponse
-from django.views import View
 
-from .models import Addresses, Categories, Manufacturers, Orders, Products, Store, OrderDetails
+from .models import (
+    Addresses,
+    Categories,
+    Manufacturers,
+    OrderDetails,
+    Orders,
+    Products,
+    Store,
+)
 from .serializers import (
-    CartSerializer,
     CategoriesSerializer,
     ManufacturersSerializer,
+    OrderDetailsSerializer,
+    OrdersSerializer,
     ProductSerializer,
     ProductsSerializer,
     StoreSerializer,
-    TestSerializer,
-    OrdersSerializer,
-    OrderDetailsSerializer,
-)
-from rest_framework.permissions import (
-    IsAuthenticated,
-    IsAdminUser,
-    AllowAny
 )
 
 
-# TODO: ADD AUTHENTICATION
 @api_view(["GET"])
 @permission_classes([IsAuthenticated, IsAdminUser])
 def get_orders(request: Request) -> Response:
@@ -51,11 +58,12 @@ def get_products(request: Request) -> Response:
 
     filters: dict[str, int] = {}
 
+    # FIXME: Should be removed in final vesion!
     hashed_password = make_password("kochamkable123")
     print(hashed_password)
     print("securePass456: " + make_password("securePass456"))
-    print("admin789: " +  make_password("admin789"))
-    print("LOL123insecure: "+ make_password("LOL123insecure"))
+    print("admin789: " + make_password("admin789"))
+    print("LOL123insecure: " + make_password("LOL123insecure"))
 
     if category_id:
         try:
@@ -112,8 +120,6 @@ def get_product(request: Request, id: int) -> Response:
 def get_categories(request: Request) -> Response:
     """Returns list of categories"""
     categories = Categories.objects.all()
-    print(categories)
-    print(categories.first())
     serializer = CategoriesSerializer(categories, many=True)
     return Response(serializer.data)
 
@@ -128,6 +134,7 @@ def get_manufacturers(request: Request) -> Response:
 
 @api_view(["GET"])
 def get_store(request: Request) -> Response:
+    """Returns list of stores"""
     store = Store.objects.all()
     serializer = StoreSerializer(store, many=True)
     return Response(serializer.data)
@@ -147,34 +154,13 @@ def get_about(request: Request) -> Response:
     )
 
 
-# Not implemented
-@api_view(["GET"])
-@permission_classes([IsAuthenticated])
-def get_cart(request: Request, id: int) -> Response:
-    product_info = request.query_params.get("product_info", "false").lower() == "true"
-    user = request.user
-
-    # Ensure the requested cart belongs to the authenticated user
-    if user.id != int(id):
-        return Response(
-            {"detail": "Unauthorized access."}, status=status.HTTP_403_FORBIDDEN
-        )
-
-    orders = Orders.objects.filter(client__id=id, status="pending")
-
-    # Serialize the cart content
-    serializer = CartSerializer(
-        orders, many=True, context={"product_info": product_info}
-    )
-    return Response(serializer.data)
-
-
 class IsClientOrAdmin(IsAuthenticated):
     """
     Custom permission to allow only the client with the given ID
     or an admin user to access the data.
     """
-    def has_permission(self, request, view):
+
+    def has_permission(self, request: Request, view: View) -> bool:
         # Ensure the user is authenticated
         if not super().has_permission(request, view):
             return False
@@ -184,32 +170,41 @@ class IsClientOrAdmin(IsAuthenticated):
             return True
 
         # Check if the user ID matches the client ID in the request
-        client_id = view.kwargs.get('client_id')
+        client_id = view.kwargs.get("client_id")
         return str(request.user.id) == str(client_id)
 
-class ClientOrdersView(APIView):
-    permission_classes = [IsClientOrAdmin]
 
-    def get(self, request, client_id):
+class ClientOrdersView(APIView):
+    """Class for handling client orders"""
+
+    permission_classes: list[Type[BasePermission]] = [IsClientOrAdmin]
+
+    def get(self, request: Request, client_id: int) -> Response:
+        """Returns orders of client"""
         # Fetch all orders for the given client_id
-        orders = Orders.objects.filter(clients_id=client_id)
-        
+        orders: QuerySet[Orders] = Orders.objects.filter(clients_id=client_id)
+
         if not orders.exists():
-            return Response({"detail": "No orders found for this client."}, status=status.HTTP_404_NOT_FOUND)
+            return Response(
+                {"detail": "No orders found for this client."},
+                status=status.HTTP_404_NOT_FOUND,
+            )
 
         # Serialize the orders
         orders_serializer = OrdersSerializer(orders, many=True)
 
         # Fetch all order details for the fetched orders
-        order_details = OrderDetails.objects.filter(order__in=orders)
+        order_details: QuerySet[OrderDetails] = OrderDetails.objects.filter(
+            order__in=orders
+        )
 
         # Serialize the order details
         order_details_serializer = OrderDetailsSerializer(order_details, many=True)
 
         # Combine the serialized data
-        response_data = {
+        response_data: dict[str, list[dict]] = {
             "orders": orders_serializer.data,
-            "order_details": order_details_serializer.data
+            "order_details": order_details_serializer.data,
         }
 
         return Response(response_data, status=status.HTTP_200_OK)
