@@ -67,15 +67,17 @@ def make_order(request: Request) -> Response:
 
     print(product_list)
     
-    # amount: int = 0
-    # for order_info in product_list:
-    #     print(f"product_id: {order_info["product_id"]}")
-    #     print(f"quantity: {order_info["quantity"]}")
-    #     product = get_object_or_404(Products, id=id)
-    #     amount += 
+    # calculating amount to pay
+    amount: int = 0
+    for order_info in product_list:
+        print(f"product_id: {order_info["product_id"]}")
+        print(f"quantity: {order_info["quantity"]}")
+        product = get_object_or_404(Products, id=order_info["product_id"])
+        print(product.price)
+        amount += order_info["quantity"] * product.price
         
     order = Orders.objects.create(
-        amount=2.00,  # FIXME: add calculating amount from quantity and price
+        amount=amount,
         status=Orders.OrderStatus.PENDING,
         order_date=date(2025, 1, 1),
         shipping_date=date(2025, 2, 3),
