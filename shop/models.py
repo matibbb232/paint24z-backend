@@ -171,6 +171,7 @@ class OrderDetails(models.Model):
         db_column="orders_id")
     product = models.ForeignKey(Products, on_delete=models.CASCADE,related_name="order_details",
         db_column="products_id")
+    quantity = models.IntegerField()
 
     class Meta:
         db_table = "order_details"
