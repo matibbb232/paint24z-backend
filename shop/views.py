@@ -66,10 +66,15 @@ def make_order(request: Request) -> Response:
     product_list = serializer.validated_data
 
     print(product_list)
-
-    # for product_id, quantity in product_list:
+    
+    # amount: int = 0
+    # for order_info in product_list:
+    #     print(f"product_id: {order_info["product_id"]}")
+    #     print(f"quantity: {order_info["quantity"]}")
+    #     product = get_object_or_404(Products, id=id)
+    #     amount += 
+        
     order = Orders.objects.create(
-        id=5,
         amount=2.00,  # FIXME: add calculating amount from quantity and price
         status=Orders.OrderStatus.PENDING,
         order_date=date(2025, 1, 1),
@@ -78,17 +83,14 @@ def make_order(request: Request) -> Response:
         users_id=user_id,
     )
 
-    # 2. Add order details
+    # add orders details
     order_details = []
-    i = 9 # FIXME: autoincrementation in db
     for order_info in product_list:
-        
         print(f"product_id: {order_info["product_id"]}")
         print(f"quantity: {order_info["quantity"]}")
         order_details.append(
-            OrderDetails(id=i,order=order, product_id=order_info["product_id"], quantity=order_info["quantity"])
+            OrderDetails(order=order, product_id=order_info["product_id"], quantity=order_info["quantity"])
         )
-        i += 1
 
     # Bulk create the order details for efficiency
     OrderDetails.objects.bulk_create(order_details)
