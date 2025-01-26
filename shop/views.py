@@ -29,6 +29,7 @@ from rest_framework.permissions import (
 
 # TODO: ADD AUTHENTICATION
 @api_view(["GET"])
+@permission_classes([IsAuthenticated, IsAdminUser])
 def get_orders(request: Request) -> Response:
     """Returns list of all orders"""
 
@@ -38,7 +39,6 @@ def get_orders(request: Request) -> Response:
 
 
 @api_view(["GET"])
-@permission_classes([IsAuthenticated, IsAdminUser])
 def get_products(request: Request) -> Response:
     """Returns list of products with optional filtering and sorting."""
     category_id: str | None = request.query_params.get("category")
@@ -98,7 +98,6 @@ def get_products(request: Request) -> Response:
 
 
 @api_view(["GET"])
-@permission_classes([IsAuthenticated])
 def get_product(request: Request, id: int) -> Response:
     """Return products with given id"""
     product = get_object_or_404(Products, id=id)
