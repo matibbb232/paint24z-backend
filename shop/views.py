@@ -8,8 +8,10 @@ from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from django.contrib.auth.hashers import make_password
+from django.http import JsonResponse
+from django.views import View
 
-from .models import Addresses, Categories, Manufacturers, Orders, Products, Store, Test
+from .models import Addresses, Categories, Manufacturers, Orders, Products, Store, OrderDetails
 from .serializers import (
     CartSerializer,
     CategoriesSerializer,
@@ -19,6 +21,7 @@ from .serializers import (
     StoreSerializer,
     TestSerializer,
     OrdersSerializer,
+    OrderDetailsSerializer,
 )
 from rest_framework.permissions import (
     IsAuthenticated,
@@ -164,3 +167,49 @@ def get_cart(request: Request, id: int) -> Response:
         orders, many=True, context={"product_info": product_info}
     )
     return Response(serializer.data)
+
+
+class IsClientOrAdmin(IsAuthenticated):
+    """
+    Custom permission to allow only the client with the given ID
+    or an admin user to access the data.
+    """
+    def has_permission(self, request, view):
+        # Ensure the user is authenticated
+        if not super().has_permission(request, view):
+            return False
+
+        # Check if the user is an admin
+        if request.user.is_staff:
+            return True
+
+        # Check if the user ID matches the client ID in the request
+        client_id = view.kwargs.get('client_id')
+        return str(request.user.id) == str(client_id)
+
+class ClientOrdersView(APIView):
+    permission_classes = [IsClientOrAdmin]
+
+    def get(self, request, client_id):
+        # Fetch all orders for the given client_id
+        orders = Orders.objects.filter(clients_id=client_id)
+        
+        if not orders.exists():
+            return Response({"detail": "No orders found for this client."}, status=status.HTTP_404_NOT_FOUND)
+
+        # Serialize the orders
+        orders_serializer = OrdersSerializer(orders, many=True)
+
+        # Fetch all order details for the fetched orders
+        order_details = OrderDetails.objects.filter(order__in=orders)
+
+        # Serialize the order details
+        order_details_serializer = OrderDetailsSerializer(order_details, many=True)
+
+        # Combine the serialized data
+        response_data = {
+            "orders": orders_serializer.data,
+            "order_details": order_details_serializer.data
+        }
+
+        return Response(response_data, status=status.HTTP_200_OK)

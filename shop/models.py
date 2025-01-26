@@ -91,23 +91,7 @@ class Addresses(models.Model):
         db_table = "addresses"
 
 
-class Orders(models.Model):
-    class OrderStatus(models.TextChoices):
-        PENDING = "pending", "Pending"
-        COMPLETED = "completed", "Completed"
-        CANCELED = "canceled", "Canceled"
 
-    amount = models.DecimalField(max_digits=10, decimal_places=2)
-    status = models.CharField(
-        max_length=50, choices=OrderStatus.choices, default=OrderStatus.PENDING
-    )
-    order_date = models.DateField()
-    shipping_date = models.DateField()
-    history = models.TextField(blank=True, null=True)
-    clients_id = models.IntegerField()
-
-    class Meta:
-        db_table = "orders"
 
 
 # class Orders(models.Model):
@@ -121,13 +105,6 @@ class Orders(models.Model):
 #     class Meta:
 #         db_table = "orders"
 
-
-class OrderDetails(models.Model):
-    order = models.ForeignKey(Orders, on_delete=models.CASCADE)
-    product = models.ForeignKey("Products", on_delete=models.CASCADE)
-
-    class Meta:
-        db_table = "order_Details"
 
 
 class Manufacturers(models.Model):
@@ -170,6 +147,33 @@ class Products(models.Model):
 
     class Meta:
         db_table = "products"
+
+class Orders(models.Model):
+    class OrderStatus(models.TextChoices):
+        PENDING = "pending", "Pending"
+        COMPLETED = "completed", "Completed"
+        CANCELED = "canceled", "Canceled"
+
+    amount = models.DecimalField(max_digits=10, decimal_places=2)
+    status = models.CharField(
+        max_length=50, choices=OrderStatus.choices, default=OrderStatus.PENDING
+    )
+    order_date = models.DateField()
+    shipping_date = models.DateField()
+    history = models.TextField(blank=True, null=True)
+    clients_id = models.IntegerField()
+
+    class Meta:
+        db_table = "orders"
+
+class OrderDetails(models.Model):
+    order = models.ForeignKey(Orders, on_delete=models.CASCADE,related_name="order_details",
+        db_column="orders_id")
+    product = models.ForeignKey(Products, on_delete=models.CASCADE,related_name="order_details",
+        db_column="products_id")
+
+    class Meta:
+        db_table = "order_details"
 
 
 class Warehouses(models.Model):

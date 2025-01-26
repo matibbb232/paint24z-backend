@@ -1,5 +1,5 @@
 from django.urls import path
-
+from .views import ClientOrdersView
 from .views import (
     get_about,
     get_cart,
@@ -19,5 +19,7 @@ urlpatterns = [
     path("cart/<int:id>/", get_cart, name="cart"),
     path("manufacturers/", get_manufacturers, name="manufacturers"),
     path("store/", get_store, name="store"),
-    path("orders/", get_orders, name="orders")
+    path("orders/", get_orders, name="orders"),
+    path('client/<int:client_id>/orders/', ClientOrdersView.as_view(), name='client-orders')
+
 ]
