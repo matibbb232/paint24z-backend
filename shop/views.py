@@ -26,6 +26,7 @@ from .models import (
     Orders,
     Products,
     Store,
+    Users,
 )
 from .serializers import (
     CategoriesSerializer,
@@ -41,10 +42,14 @@ from .serializers import (
 
 ## todo: add authentication and adding client id from jwt, and putting it to db
 @api_view(["POST"])
+@permission_classes([IsAuthenticated])
 def make_order(request: Request) -> Response:
     """Function for posting order data"""
+    username = request.user
     serializer = ProductQuantitySerializer(data=request.data, many=True)
-
+    print(username)
+    Users.objects.filter(username=username)
+    
     if serializer.is_valid():
         # Process the valid data
         product_data = serializer.validated_data
@@ -194,19 +199,19 @@ class IsClientOrAdmin(IsAuthenticated):
             return True
 
         # Check if the user ID matches the client ID in the request
-        client_id = view.kwargs.get("client_id")
-        return str(request.user.id) == str(client_id)
+        users_id = view.kwargs.get("users_id")
+        return str(request.user.id) == str(users_id)
 
 
-class ClientOrdersView(APIView):
+class UserOrdersView(APIView):
     """Class for handling client orders"""
 
     permission_classes: list[Type[BasePermission]] = [IsClientOrAdmin]
 
-    def get(self, request: Request, client_id: int) -> Response:
+    def get(self, request: Request, user_id: int) -> Response:
         """Returns orders of client"""
         # Fetch all orders for the given client_id
-        orders: QuerySet[Orders] = Orders.objects.filter(clients_id=client_id)
+        orders: QuerySet[Orders] = Orders.objects.filter(users_id=user_id)
 
         if not orders.exists():
             return Response(

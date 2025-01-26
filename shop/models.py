@@ -161,7 +161,7 @@ class Orders(models.Model):
     order_date = models.DateField()
     shipping_date = models.DateField()
     history = models.TextField(blank=True, null=True)
-    clients_id = models.IntegerField()
+    users_id = models.IntegerField()
 
     class Meta:
         db_table = "orders"
@@ -215,22 +215,22 @@ class Users(AbstractBaseUser, PermissionsMixin):
     is_active = models.BooleanField(default=True)  # Required for user accounts
     is_staff = models.BooleanField(default=False)  # Required for admin interface
     is_superuser = models.BooleanField(default=False)
-    employee = models.ForeignKey(
-        Employees,
-        on_delete=models.CASCADE,
-        blank=True,
-        null=True,
-        related_name="users",
-        db_column="employees_id",
-    )
-    client = models.ForeignKey(
-        Clients,
-        on_delete=models.CASCADE,
-        blank=True,
-        null=True,
-        related_name="users",
-        db_column="clients_id",
-    )
+    # employee = models.ForeignKey(
+    #     Employees,
+    #     on_delete=models.CASCADE,
+    #     blank=True,
+    #     null=True,
+    #     related_name="users",
+    #     db_column="employees_id",
+    # )
+    # client = models.ForeignKey(
+    #     Clients,
+    #     on_delete=models.CASCADE,
+    #     blank=True,
+    #     null=True,
+    #     related_name="users",
+    #     db_column="clients_id",
+    # )
 
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
