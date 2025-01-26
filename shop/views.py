@@ -1,3 +1,4 @@
+from datetime import date
 from typing import Type
 
 from django.contrib.auth.hashers import make_password
@@ -48,23 +49,54 @@ def make_order(request: Request) -> Response:
     username = request.user
     serializer = ProductQuantitySerializer(data=request.data, many=True)
     print(username)
-    Users.objects.filter(username=username)
-    
-    if serializer.is_valid():
-        # Process the valid data
-        product_data = serializer.validated_data
+    try:
+        user = Users.objects.get(username=username)
+        user_id = user.id
+    except Users.DoesNotExist:
+        Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-        print(product_data)
+    print(user_id)
 
-        # Example: You could save the data, calculate totals, etc.
-        # For now, let's just return the received data
-        return Response(
-            {"message": "Products processed successfully.", "data": product_data},
-            status=status.HTTP_200_OK,
+    if not serializer.is_valid():
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    # Process the valid data
+    product_list = serializer.validated_data
+
+    print(product_list)
+
+    # for product_id, quantity in product_list:
+    order = Orders.objects.create(
+        id=5,
+        amount=2.00,  # FIXME: add calculating amount from quantity and price
+        status=Orders.OrderStatus.PENDING,
+        order_date=date(2025, 1, 1),
+        shipping_date=date(2025, 2, 3),
+        history="historia zamowienia",
+        users_id=user_id,
+    )
+
+    # 2. Add order details
+    order_details = []
+    i = 9 # FIXME: autoincrementation in db
+    for order_info in product_list:
+        
+        print(f"product_id: {order_info["product_id"]}")
+        print(f"quantity: {order_info["quantity"]}")
+        order_details.append(
+            OrderDetails(id=i,order=order, product_id=order_info["product_id"], quantity=order_info["quantity"])
         )
+        i += 1
 
-    # Return errors if validation fails
-    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    # Bulk create the order details for efficiency
+    OrderDetails.objects.bulk_create(order_details)
+
+    # Example: You could save the data, calculate totals, etc.
+    # For now, let's just return the received data
+    return Response(
+        {"message": "Products processed successfully.", "data": product_list},
+        status=status.HTTP_200_OK,
+    )
 
 
 @api_view(["GET"])
