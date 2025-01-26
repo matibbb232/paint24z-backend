@@ -34,8 +34,32 @@ from .serializers import (
     OrdersSerializer,
     ProductSerializer,
     ProductsSerializer,
+    ProductQuantitySerializer,
     StoreSerializer,
 )
+
+
+## todo: add authentication and adding client id from jwt, and putting it to db
+@api_view(["POST"])
+def make_order(request: Request) -> Response:
+    """Function for posting order data"""
+    serializer = ProductQuantitySerializer(data=request.data, many=True)
+
+    if serializer.is_valid():
+        # Process the valid data
+        product_data = serializer.validated_data
+
+        print(product_data)
+
+        # Example: You could save the data, calculate totals, etc.
+        # For now, let's just return the received data
+        return Response(
+            {"message": "Products processed successfully.", "data": product_data},
+            status=status.HTTP_200_OK,
+        )
+
+    # Return errors if validation fails
+    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 @api_view(["GET"])

@@ -8,6 +8,7 @@ from .views import (
     get_products,
     get_store,
     get_orders,
+    make_order,
 )
 
 urlpatterns = [
@@ -18,6 +19,6 @@ urlpatterns = [
     path("manufacturers/", get_manufacturers, name="manufacturers"),
     path("store/", get_store, name="store"),
     path("orders/", get_orders, name="orders"),
-    path('client/<int:client_id>/orders/', ClientOrdersView.as_view(), name='client-orders')
-
+    path('client/<int:client_id>/orders/', ClientOrdersView.as_view(), name='client-orders'),
+    path('makeorder/', make_order, name='make_order')
 ]
