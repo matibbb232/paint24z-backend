@@ -94,7 +94,7 @@ class OrderDetailsSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = OrderDetails
-        fields = ["id", "order", "product", "product_name"]
+        fields = "__all__"
 
 
 class ClientsSerializer(serializers.ModelSerializer):
