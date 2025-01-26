@@ -107,6 +107,7 @@ class Products(models.Model):
     weight = models.DecimalField(max_digits=10, decimal_places=5)
     store_id = models.IntegerField()
     instock = models.IntegerField()
+    photo_id = models.CharField(max_length=100)
     # manufacturers_id = models.IntegerField()
     manufacturer = models.ForeignKey(
         Manufacturers,  # Reference the Manufacturers model
