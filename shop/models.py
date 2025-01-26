@@ -63,32 +63,9 @@ class Operators(models.Model):
         db_table = "Operators"
 
 
-class Clients(models.Model):
-    email_address = models.EmailField(max_length=30)
-    phone_number = models.CharField(max_length=15)
-    name = models.CharField(max_length=30)
-    last_name = models.CharField(max_length=50)
-    gender = models.CharField(max_length=1, choices=Gender.choices)
-    store = models.ForeignKey(Store, on_delete=models.CASCADE)
-
-    class Meta:
-        db_table = "clients"
 
 
-class Addresses(models.Model):
-    country = models.CharField(max_length=30)
-    city = models.CharField(max_length=30)
-    street = models.CharField(max_length=30)
-    building_number = models.CharField(max_length=5)
-    apartment_number = models.CharField(max_length=4, blank=True, null=True)
-    postal_code = models.CharField(max_length=6)
-    warehouse = models.ForeignKey("Warehouses", on_delete=models.CASCADE)
-    client = models.ForeignKey(Clients, on_delete=models.CASCADE)
-    store = models.ForeignKey(Store, on_delete=models.CASCADE)
-    employee = models.ForeignKey(Employees, on_delete=models.CASCADE)
 
-    class Meta:
-        db_table = "addresses"
 
 
 
@@ -242,3 +219,30 @@ class Users(AbstractBaseUser, PermissionsMixin):
 
     class Meta:
         db_table = "users"
+
+class Clients(models.Model):
+    email_address = models.EmailField(max_length=30)
+    phone_number = models.CharField(max_length=15)
+    name = models.CharField(max_length=30)
+    last_name = models.CharField(max_length=50)
+    gender = models.CharField(max_length=1, choices=Gender.choices)
+    store = models.ForeignKey(Store, on_delete=models.CASCADE)
+    users_id = models.IntegerField()
+
+    class Meta:
+        db_table = "clients"
+
+class Addresses(models.Model):
+    country = models.CharField(max_length=30)
+    city = models.CharField(max_length=30)
+    street = models.CharField(max_length=30)
+    building_number = models.CharField(max_length=5)
+    apartment_number = models.CharField(max_length=4, blank=True, null=True)
+    postal_code = models.CharField(max_length=6)
+    warehouse = models.ForeignKey("Warehouses", on_delete=models.CASCADE)
+    client = models.ForeignKey(Clients, on_delete=models.CASCADE)
+    store = models.ForeignKey(Store, on_delete=models.CASCADE)
+    employee = models.ForeignKey(Employees, on_delete=models.CASCADE)
+
+    class Meta:
+        db_table = "addresses"

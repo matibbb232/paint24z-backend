@@ -28,6 +28,7 @@ from .models import (
     Products,
     Store,
     Users,
+    Clients,
 )
 from .serializers import (
     CategoriesSerializer,
@@ -38,6 +39,7 @@ from .serializers import (
     ProductsSerializer,
     ProductQuantitySerializer,
     StoreSerializer,
+    UserSerializer,
 )
 
 
@@ -213,6 +215,70 @@ def get_about(request: Request) -> Response:
     return Response(
         {"store": store_serializer.data, "addresses": addresses_serializer.data}
     )
+
+@api_view(["GET"])
+def get_users(request: Request) -> Response:
+    users = Users.objects.all()
+    serializer = UserSerializer(users, many=True)  # Specify `many=True` for multiple instances
+
+    return Response(
+        {"users": serializer.data}
+    )
+
+@api_view(["POST"])
+def register_client(request):
+    """
+    Register a new client.
+    Creates an entry in the Users table and links it to a new entry in the Clients table.
+    """
+    data = request.data
+
+    # Validate required fields
+    required_fields = [
+        "username", "password", "email_address", "phone_number",
+        "name", "last_name", "gender", "store_id"
+    ]
+    for field in required_fields:
+        if field not in data:
+            return Response(
+                {"error": f"Missing required field: {field}"},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+    # Check if the store exists
+    try:
+        store = Store.objects.get(id=data["store_id"])
+    except Store.DoesNotExist:
+        return Response({"error": "Store not found"}, status=status.HTTP_404_NOT_FOUND)
+
+    try:
+        # Create the user
+        user = Users.objects.create(
+            username=data["username"],
+            password=make_password(data["password"]),
+            is_active=True,
+            is_staff=False,
+            is_superuser=False
+        )
+        user.save()
+        print(user.id)
+        # Create the client and link it to the user
+        client = Clients.objects.create(
+            email_address=data["email_address"],
+            phone_number=data["phone_number"],
+            name=data["name"],
+            last_name=data["last_name"],
+            gender=data["gender"],
+            store=store,
+            users_id = user.id,
+        )
+
+        return Response(
+            {"message": "Client registered successfully", "user_id": user.id, "client_id": client.id},
+            status=status.HTTP_201_CREATED
+        )
+    except Exception as e:
+        return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
 class IsClientOrAdmin(IsAuthenticated):

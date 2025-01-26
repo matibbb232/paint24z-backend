@@ -1,6 +1,7 @@
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from rest_framework_simplejwt.views import TokenObtainPairView
 from rest_framework import serializers
+from django.contrib.auth.hashers import make_password
 from shop.models import (
     Products,
     Categories,
@@ -100,19 +101,56 @@ class OrderDetailsSerializer(serializers.ModelSerializer):
         model = OrderDetails
         fields = "__all__"
 
+class UserSerializer(serializers.ModelSerializer):
+    """
+    Serializer for the Users model.
+    Handles password hashing during creation and update.
+    """
+    
+    class Meta:
+        model = Users
+        fields = [
+            "id",
+            "username",
+            "password",
+            "creation_date",
+            "last_login",
+            "is_active",
+            "is_staff",
+            "is_superuser",
+        ]
+        extra_kwargs = {
+            "password": {"write_only": True},  # Password should not be visible in responses
+            "last_login": {"read_only": True},  # Automatically managed by Django
+            "creation_date": {"read_only": True},  # Automatically set on creation
+        }
+
+    def create(self, validated_data):
+        """
+        Override create method to hash the password before saving.
+        """
+        password = validated_data.pop("password", None)
+        user = super().create(validated_data)
+        if password:
+            user.password = make_password(password)
+            user.save()
+        return user
+
+    def update(self, instance, validated_data):
+        """
+        Override update method to hash the password if it is updated.
+        """
+        password = validated_data.pop("password", None)
+        user = super().update(instance, validated_data)
+        if password:
+            user.password = make_password(password)
+            user.save()
+        return user
 
 class ClientsSerializer(serializers.ModelSerializer):
     class Meta:
         model = Clients
-        fields = [
-            "id",
-            "email_address",
-            "phone_number",
-            "name",
-            "last_name",
-            "gender",
-            "store",
-        ]
+        fields = "__all__"
 
 
 class CartSerializer(serializers.ModelSerializer):
