@@ -20,6 +20,11 @@ from .serializers import (
     TestSerializer,
     OrdersSerializer,
 )
+from rest_framework.permissions import (
+    IsAuthenticated,
+    IsAdminUser,
+    AllowAny
+)
 
 
 # TODO: ADD AUTHENTICATION
@@ -33,6 +38,7 @@ def get_orders(request: Request) -> Response:
 
 
 @api_view(["GET"])
+@permission_classes([IsAuthenticated, IsAdminUser])
 def get_products(request: Request) -> Response:
     """Returns list of products with optional filtering and sorting."""
     category_id: str | None = request.query_params.get("category")
@@ -44,6 +50,9 @@ def get_products(request: Request) -> Response:
 
     hashed_password = make_password("kochamkable123")
     print(hashed_password)
+    print("securePass456: " + make_password("securePass456"))
+    print("admin789: " +  make_password("admin789"))
+    print("LOL123insecure: "+ make_password("LOL123insecure"))
 
     if category_id:
         try:
@@ -89,6 +98,7 @@ def get_products(request: Request) -> Response:
 
 
 @api_view(["GET"])
+@permission_classes([IsAuthenticated])
 def get_product(request: Request, id: int) -> Response:
     """Return products with given id"""
     product = get_object_or_404(Products, id=id)
