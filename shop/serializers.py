@@ -84,19 +84,9 @@ class AddressSerializer(serializers.ModelSerializer):
 
 
 class OrdersSerializer(serializers.ModelSerializer):
-    client_name = serializers.StringRelatedField(source="client.name")
-
     class Meta:
         model = Orders
-        fields = [
-            "id",
-            "amount",
-            "status",
-            "order_date",
-            "shipping_date",
-            "history",
-            "client_name",
-        ]
+        fields = "__all__"
 
 
 class OrderDetailsSerializer(serializers.ModelSerializer):

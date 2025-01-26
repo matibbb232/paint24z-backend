@@ -18,7 +18,18 @@ from .serializers import (
     ProductsSerializer,
     StoreSerializer,
     TestSerializer,
+    OrdersSerializer,
 )
+
+
+# TODO: ADD AUTHENTICATION
+@api_view(["GET"])
+def get_orders(request: Request) -> Response:
+    """Returns list of all orders"""
+
+    orders = Orders.objects.all()
+    serializer = OrdersSerializer(orders, many=True)
+    return Response(serializer.data)
 
 
 @api_view(["GET"])
@@ -30,8 +41,6 @@ def get_products(request: Request) -> Response:
     order: str = request.query_params.get("order", "asc").lower()  # default value "asc"
 
     filters: dict[str, int] = {}
-
-    
 
     hashed_password = make_password("kochamkable123")
     print(hashed_password)
